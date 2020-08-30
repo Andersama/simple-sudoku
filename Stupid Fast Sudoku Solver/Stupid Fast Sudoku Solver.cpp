@@ -449,7 +449,7 @@ std::array<sudoku_selection, output_size> solve_sudoku(const std::array<sudoku_s
 		}
 	next_stack:
 		//resort by the least# of choices left to increase speed
-		std::sort(ret_puzzle.begin() + (x + 1), ret_puzzle.end(), [&row_mark, &col_mark, &blk_mark](sudoku_selection& lhs, sudoku_selection& rhs) {
+		auto it = std::min_element(ret_puzzle.begin() + (x + 1), ret_puzzle.end(), [&row_mark, &col_mark, &blk_mark](sudoku_selection& lhs, sudoku_selection& rhs) {
 			size_t lhs_marks = 0;
 			size_t rhs_marks = 0;
 			//we can ignore 0 b/c it's the throw away index
@@ -460,8 +460,8 @@ std::array<sudoku_selection, output_size> solve_sudoku(const std::array<sudoku_s
 				rhs_marks += (row_mark[rhs.y][i] || col_mark[rhs.x][i] || blk_mark[rhs.b][i]);
 			}
 			return rhs_marks < lhs_marks;
-			});
-
+		});
+		std::swap(ret_puzzle[x + 1], *it);
 		++x;
 		//forward progress we trample over stack
 		//ret_puzzle[x] = unmark_cell(ret_puzzle[x]);
